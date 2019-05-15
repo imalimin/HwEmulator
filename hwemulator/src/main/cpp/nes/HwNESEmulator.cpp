@@ -16,5 +16,19 @@ HwNESEmulator::~HwNESEmulator() {
 }
 
 int HwNESEmulator::prepare(string rom) {
+    this->rom = rom;
+    return 0;
+}
+
+int HwNESEmulator::start() {
+    run_emulator(const_cast<char *>(rom.c_str()));
+    return 0;
+}
+
+int HwNESEmulator::load() {
+    return 0;
+}
+
+int HwNESEmulator::save() {
     return 0;
 }

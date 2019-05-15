@@ -94,7 +94,7 @@ BYTE NesPaletteRGB[64][3] = {
    152, 248, 240,      0,   0,   0,      0,   0,   0,      0,   0,   0,
 };
 
-long run_emulator(char *rom_path)
+static long run_emulator(char *rom_path)
 {
   unsigned int 	i,vmode;
   int screen_w=0, screen_h=0;

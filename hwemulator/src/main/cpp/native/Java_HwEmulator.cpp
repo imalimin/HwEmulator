@@ -6,9 +6,7 @@
 */
 
 #include <jni.h>
-#include "InfoNES.h"
-#include "InfoNES_System.h"
-#include "InfoNES_pAPU.h"
+#include "HwNESEmulator.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,7 +14,8 @@ extern "C" {
 
 JNIEXPORT void JNICALL Java_com_lmy_emulator_HwEmulator_run
         (JNIEnv *env, jobject thiz) {
-    run_emulator();
+    HwNESEmulator *emulator = new HwNESEmulator();
+    emulator->prepare("/sdcard/yx.nes");
 }
 
 #ifdef __cplusplus

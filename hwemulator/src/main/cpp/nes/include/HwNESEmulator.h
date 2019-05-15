@@ -9,6 +9,11 @@
 #define HWEMULATOR_HWNESEMULATOR_H
 
 #include <string>
+#include <SDL.h>
+#include <cstring>
+#include "../infones/InfoNES.h"
+#include "../infones/InfoNES_System.h"
+#include "../infones/InfoNES_pAPU.h"
 
 using namespace std;
 
@@ -19,6 +24,18 @@ public:
     virtual ~HwNESEmulator();
 
     int prepare(string rom);
+
+    int load();
+
+    int save();
+
+private:
+    int start();
+
+private:
+    string rom;
+/* for video */
+    SDL_Surface *screen;
 };
 
 
