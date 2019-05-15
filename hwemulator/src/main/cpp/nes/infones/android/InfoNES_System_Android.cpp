@@ -23,8 +23,19 @@
 #include "../InfoNES_pAPU.h"
 
 #include "AudioPlayer.h"
+#include "Logcat.h"
 
-static long run_emulator(char *rom_path);
+static int run_emulator(char *rom_path) {
+    /* If a rom name specified, start it */
+
+    if (0 != InfoNES_Load(rom_path)) {
+        Logcat::e("HWEMULATOR", "Load rom failed!");
+        return -1;
+    }
+    /* MainLoop */
+    InfoNES_Main();
+    return 0;
+}
 
 /*-------------------------------------------------------------------*/
 /*  Palette data                                                     */

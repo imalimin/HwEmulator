@@ -15,7 +15,7 @@
 
 #include "InfoNES_Types.h"
 
-static long run_emulator(char *rom_path);
+static int run_emulator(char *rom_path);
 
 /*-------------------------------------------------------------------*/
 /*  Palette data                                                     */
