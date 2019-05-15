@@ -2,7 +2,6 @@ package com.lmy.sample.emulator
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.lmy.sample.emulator.R
 
 class MainActivity : AppCompatActivity() {
 

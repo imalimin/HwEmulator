@@ -4,6 +4,7 @@ include_directories(
         #        ${CMAKE_SOURCE_DIR}/src/main/cpp/sdl2/include
         #        ${CMAKE_SOURCE_DIR}/src/main/cpp/sdl1x/include
         ${CMAKE_SOURCE_DIR}/src/main/cpp/common/include
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/nes/infones
 )
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
