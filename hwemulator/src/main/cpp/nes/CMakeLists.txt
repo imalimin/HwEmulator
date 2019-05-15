@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 project(hwemulator_nes)
 include_directories(
 #        ${CMAKE_SOURCE_DIR}/src/main/cpp/sdl2/include
-        ${CMAKE_SOURCE_DIR}/src/main/cpp/sdl1x/include
+#        ${CMAKE_SOURCE_DIR}/src/main/cpp/sdl1x/include
 )
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
@@ -20,7 +20,6 @@ file(
         ${PROJECT_SOURCE_DIR}/infones/*.cpp
         ${PROJECT_SOURCE_DIR}/infones/android/*.cpp
         ${PROJECT_SOURCE_DIR}/infones/mapper/*.cpp
-        ${PROJECT_SOURCE_DIR}/infones/sdl/*.cpp
 )
 add_library(
         hwemulator_nes
@@ -34,6 +33,5 @@ find_library(
 
 target_link_libraries(
         hwemulator_nes
-        sdl1x
         ${log-lib}
 )
