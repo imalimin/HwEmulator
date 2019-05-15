@@ -22,6 +22,8 @@
 #include "../InfoNES_System.h"
 #include "../InfoNES_pAPU.h"
 
+#include "AudioPlayer.h"
+
 static long run_emulator(char *rom_path);
 
 /*-------------------------------------------------------------------*/
