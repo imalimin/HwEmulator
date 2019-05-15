@@ -40,7 +40,7 @@ find_library( # Sets the name of the path variable.
         log )
 add_library(
         sdl2
-        STATIC
+        SHARED
         ${SDL_SOURCES}
 )
 target_link_libraries(sdl2 ${log-lib} GLESv1_CM GLESv2 EGL android dl)

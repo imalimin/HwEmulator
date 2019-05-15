@@ -1,7 +1,7 @@
 package com.lmy.emulator
 
 class HwEmulator {
-    external fun test()
+    external fun run()
 
     companion object {
         fun init() {

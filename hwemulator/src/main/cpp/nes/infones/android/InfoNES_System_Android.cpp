@@ -94,21 +94,6 @@ BYTE NesPaletteRGB[64][3] = {
    152, 248, 240,      0,   0,   0,      0,   0,   0,      0,   0,   0,
 };
 
-#include <jni.h>
-//#include "InfoNES.h"
-
-long run_emulator(char *rom_path);
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-JNIEXPORT jlong JNICALL Java_com_android_infones_InfoNES_run_1emulator(JNIEnv *env, jobject obj){
-    return run_emulator("/sdcard/SMB.nes");
-}
-#ifdef __cplusplus
-}
-#endif
-
 long run_emulator(char *rom_path)
 {
   unsigned int 	i,vmode;

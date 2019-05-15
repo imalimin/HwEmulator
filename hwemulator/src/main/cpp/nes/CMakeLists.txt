@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.4.1)
 project(hwemulator_nes)
 include_directories(
-        ${CMAKE_SOURCE_DIR}/src/main/cpp/sdl2/include
+#        ${CMAKE_SOURCE_DIR}/src/main/cpp/sdl2/include
+        ${CMAKE_SOURCE_DIR}/src/main/cpp/sdl1x/include
 )
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
@@ -33,6 +34,6 @@ find_library(
 
 target_link_libraries(
         hwemulator_nes
-        sdl2
+        sdl1x
         ${log-lib}
 )
