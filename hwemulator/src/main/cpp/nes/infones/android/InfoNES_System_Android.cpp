@@ -156,7 +156,19 @@ void InfoNES_ReleaseRom() {
 /* Transfer the contents of work frame on the screen */
 void InfoNES_LoadFrame() {
     Logcat::e("HWEMULATOR", "InfoNES_LoadFrame");
-    //TODO
+    uint8_t *frameBuf = new uint8_t[NES_DISP_WIDTH * NES_DISP_HEIGHT * 4];
+    uint8_t *buf = frameBuf;
+    /* Exchange 16-bit to 24-bit  */
+    for (register int y = 0; y < NES_DISP_HEIGHT; y++) {
+        for (register int x = 0; x < NES_DISP_WIDTH; x++) {
+            WORD wColor = WorkFrame[(y << 8) + x];
+            *(buf++) = 0;
+            *(buf++) = (uint8_t) ((wColor & 0x7c00) >> 7);
+            *(buf++) = (uint8_t) ((wColor & 0x03e0) >> 2);
+            *(buf++) = (uint8_t) ((wColor & 0x001f) << 3);
+        }
+    }
+    delete[]frameBuf;
 }
 
 /* Get a joypad state */
