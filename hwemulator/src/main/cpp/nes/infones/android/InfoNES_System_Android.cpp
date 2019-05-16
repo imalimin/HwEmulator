@@ -72,74 +72,88 @@ BYTE NesPaletteRGB[64][3] = {
 
 /* Menu screen */
 int InfoNES_Menu() {
+    Logcat::e("HWEMULATOR", "InfoNES_Menu");
     return 0;
 }
 
 /* Read ROM image file */
 int InfoNES_ReadRom(const char *pszFileName) {
+    Logcat::e("HWEMULATOR", "InfoNES_ReadRom: %s", pszFileName);
 
     return 0;
 }
 
 /* Release a memory for ROM */
 void InfoNES_ReleaseRom() {
+    Logcat::e("HWEMULATOR", "InfoNES_ReleaseRom");
 
 }
 
 /* Transfer the contents of work frame on the screen */
 void InfoNES_LoadFrame() {
+    Logcat::e("HWEMULATOR", "InfoNES_LoadFrame");
 
 }
 
 /* Get a joypad state */
 void InfoNES_PadState(DWORD *pdwPad1, DWORD *pdwPad2, DWORD *pdwSystem) {
+    Logcat::e("HWEMULATOR", "InfoNES_PadState");
 
 }
 
 /* memcpy */
 void *InfoNES_MemoryCopy(void *dest, const void *src, int count) {
+    Logcat::e("HWEMULATOR", "InfoNES_MemoryCopy: count=%d", count);
     return 0;
 }
 
 /* memset */
 void *InfoNES_MemorySet(void *dest, int c, int count) {
+    Logcat::e("HWEMULATOR", "InfoNES_MemorySet: count=%d", count);
     return 0;
 }
 
 /* Print debug message */
 void InfoNES_DebugPrint(char *pszMsg) {
+    Logcat::e("HWEMULATOR", "DEBUG: %s", pszMsg);
 
 }
 
 /* Wait */
 void InfoNES_Wait() {
+    Logcat::e("HWEMULATOR", "InfoNES_Wait");
 
 }
 
 /* Sound Initialize */
 void InfoNES_SoundInit(void) {
+    Logcat::e("HWEMULATOR", "InfoNES_SoundInit");
 
 }
 
 /* Sound Open */
 int InfoNES_SoundOpen(int samples_per_sync, int sample_rate) {
+    Logcat::e("HWEMULATOR", "InfoNES_SoundOpen: %d, %d", samples_per_sync, sample_rate);
     return 0;
 }
 
 /* Sound Close */
 void InfoNES_SoundClose(void) {
-
+    Logcat::e("HWEMULATOR", "InfoNES_SoundClose");
 }
 
 /* Sound Output 5 Waves - 2 Pulse, 1 Triangle, 1 Noise, 1 DPCM */
 void
 InfoNES_SoundOutput(int samples, BYTE *wave1, BYTE *wave2, BYTE *wave3, BYTE *wave4, BYTE *wave5) {
-
+    Logcat::e("HWEMULATOR", "InfoNES_SoundOutput");
 }
 
 /* Print system message */
 void InfoNES_MessageBox(char *pszMsg, ...) {
-
+    va_list args;
+    va_start(args, pszMsg);
+    Logcat::e("HWEMULATOR", pszMsg, args);
+    va_end(args);
 }
 
 #endif /* !InfoNES_SYSTEM_H_INCLUDED */
