@@ -9,7 +9,6 @@
 #define HWEMULATOR_HWNESEMULATOR_H
 
 #include <string>
-#include <SDL.h>
 #include <cstring>
 #include "../infones/InfoNES.h"
 #include "../infones/InfoNES_System.h"
@@ -34,8 +33,6 @@ private:
 
 private:
     string rom;
-/* for video */
-    SDL_Surface *screen;
 };
 
 
