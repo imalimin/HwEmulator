@@ -71,6 +71,7 @@ bool bThread = true;
 DWORD dwKeyPad1 = 0;
 DWORD dwKeyPad2 = 0;
 DWORD dwKeySystem = 0;
+AudioPlayer *audioPlayer = nullptr;
 
 /*-------------------------------------------------------------------*/
 /*  Function prototypes                                              */
@@ -149,6 +150,7 @@ void InfoNES_ReleaseRom() {
         free(VROM);
         VROM = nullptr;
     }
+    bThread = true;
 }
 
 /* Transfer the contents of work frame on the screen */
@@ -199,24 +201,33 @@ void InfoNES_SoundInit(void) {
 /* Sound Open */
 int InfoNES_SoundOpen(int samples_per_sync, int sample_rate) {
     Logcat::e("HWEMULATOR", "InfoNES_SoundOpen: %d, %d", samples_per_sync, sample_rate);
-    //TODO
+    audioPlayer = new AudioPlayer(1, static_cast<uint32_t>(sample_rate),
+                                  SL_PCMSAMPLEFORMAT_FIXED_8, 1024);
+    audioPlayer->start();
     return 0;
 }
 
 /* Sound Close */
 void InfoNES_SoundClose(void) {
     Logcat::e("HWEMULATOR", "InfoNES_SoundClose");
-    //TODO
+    if (audioPlayer) {
+        audioPlayer->stop();
+        delete audioPlayer;
+        audioPlayer = nullptr;
+    }
 }
 
 /* Sound Output 5 Waves - 2 Pulse, 1 Triangle, 1 Noise, 1 DPCM */
 void
 InfoNES_SoundOutput(int samples, BYTE *wave1, BYTE *wave2, BYTE *wave3, BYTE *wave4, BYTE *wave5) {
-    Logcat::e("HWEMULATOR", "InfoNES_SoundOutput: %d", samples);
-    BYTE *final_wave = new BYTE[samples];
-    for (int i = 0; i < samples; i++) {
-        final_wave[i] =
-                (wave1[i] + wave2[i] + wave3[i] + wave4[i] + wave5[i]) / 5;
+//    Logcat::e("HWEMULATOR", "InfoNES_SoundOutput: %d", samples);
+    if (audioPlayer) {
+        BYTE *final_wave = new BYTE[samples];
+        for (int i = 0; i < samples; i++) {
+            final_wave[i] = static_cast<BYTE>(
+                    (wave1[i] + wave2[i] + wave3[i] + wave4[i] + wave5[i]) / 5);
+        }
+        audioPlayer->write(final_wave, samples);
     }
 }
 
