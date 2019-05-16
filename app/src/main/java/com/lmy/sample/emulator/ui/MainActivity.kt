@@ -11,7 +11,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mEmulator.prepare()
-        mEmulator.start()
+        object : Thread() {
+            override fun run() {
+                mEmulator.start()
+            }
+        }.start()
     }
 
     override fun onDestroy() {
