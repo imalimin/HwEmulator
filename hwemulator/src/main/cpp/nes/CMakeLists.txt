@@ -21,7 +21,7 @@ file(
         ${PROJECT_SOURCE_DIR}/*.cpp
         ${PROJECT_SOURCE_DIR}/infones/*.cpp
         ${PROJECT_SOURCE_DIR}/infones/android/*.cpp
-        ${PROJECT_SOURCE_DIR}/infones/mapper/*.cpp
+#        ${PROJECT_SOURCE_DIR}/infones/mapper/*.cpp
 )
 add_library(
         hwemulator_nes

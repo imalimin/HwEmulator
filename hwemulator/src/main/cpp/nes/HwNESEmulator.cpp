@@ -6,6 +6,10 @@
 */
 
 #include "include/HwNESEmulator.h"
+#include "Logcat.h"
+#include "./infones/InfoNES.h"
+#include "./infones/InfoNES_System.h"
+#include "./infones/InfoNES_pAPU.h"
 
 HwNESEmulator::HwNESEmulator() {
 
@@ -21,7 +25,13 @@ int HwNESEmulator::prepare(string rom) {
 }
 
 int HwNESEmulator::start() {
-    run_emulator(const_cast<char *>(rom.c_str()));
+    /* If a rom name specified, start it */
+    if (0 != InfoNES_Load(rom.c_str())) {
+        Logcat::e("HWEMULATOR", "Load rom failed!");
+        return -1;
+    }
+    /* MainLoop */
+    InfoNES_Main();
     return 0;
 }
 

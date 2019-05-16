@@ -10,9 +10,6 @@
 
 #include <string>
 #include <cstring>
-#include "../infones/InfoNES.h"
-#include "../infones/InfoNES_System.h"
-#include "../infones/InfoNES_pAPU.h"
 
 using namespace std;
 
