@@ -21,12 +21,13 @@ public:
 
     int prepare(string rom);
 
+    int start();
+
     int load();
 
     int save();
 
 private:
-    int start();
 
 private:
     string rom;

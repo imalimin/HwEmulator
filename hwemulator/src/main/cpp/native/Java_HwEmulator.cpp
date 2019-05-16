@@ -12,10 +12,37 @@
 extern "C" {
 #endif
 
-JNIEXPORT void JNICALL Java_com_lmy_emulator_HwEmulator_run
+static HwNESEmulator *getHandler(jlong handler) {
+    return reinterpret_cast<HwNESEmulator *>(handler);
+}
+
+JNIEXPORT jlong JNICALL Java_com_lmy_emulator_HwEmulator_create
         (JNIEnv *env, jobject thiz) {
-    HwNESEmulator *emulator = new HwNESEmulator();
-    emulator->prepare("/sdcard/yx.nes");
+    return reinterpret_cast<jlong>(new HwNESEmulator());
+}
+
+JNIEXPORT jint JNICALL Java_com_lmy_emulator_HwEmulator_prepare
+        (JNIEnv *env, jobject thiz, jlong handler) {
+    if (handler) {
+        return getHandler(handler)->prepare("/sdcard/yx.nes");
+    }
+    return -1;
+}
+
+JNIEXPORT jint JNICALL Java_com_lmy_emulator_HwEmulator_start
+        (JNIEnv *env, jobject thiz, jlong handler) {
+    if (handler) {
+        return getHandler(handler)->start();
+    }
+    return -1;
+}
+
+JNIEXPORT jint JNICALL Java_com_lmy_emulator_HwEmulator_stop
+        (JNIEnv *env, jobject thiz, jlong handler) {
+    if (handler) {
+        return -1;
+    }
+    return -1;
 }
 
 #ifdef __cplusplus
