@@ -4,7 +4,7 @@ class HwEmulator {
     external fun run()
 
     companion object {
-        fun init() {
+        init {
 
         }
     }
