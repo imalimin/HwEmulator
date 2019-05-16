@@ -1,8 +1,9 @@
-package com.lmy.sample.emulator
+package com.lmy.sample.emulator.ui
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.lmy.emulator.HwEmulator
+import com.lmy.sample.emulator.R
 
 class MainActivity : AppCompatActivity() {
     private val mEmulator = HwEmulator()
