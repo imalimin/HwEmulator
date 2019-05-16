@@ -23,6 +23,8 @@ public:
 
     int start();
 
+    int stop();
+
     int load();
 
     int save();

@@ -35,6 +35,11 @@ int HwNESEmulator::start() {
     return 0;
 }
 
+int HwNESEmulator::stop() {
+    InfoNES_Stop();
+    return 0;
+}
+
 int HwNESEmulator::load() {
     return 0;
 }

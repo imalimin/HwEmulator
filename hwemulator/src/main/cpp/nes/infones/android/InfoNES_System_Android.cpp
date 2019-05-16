@@ -66,14 +66,29 @@ BYTE NesPaletteRGB[64][3] = {
         152, 248, 240, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
+bool bThread = true;
+//Key
+DWORD dwKeyPad1 = 0;
+DWORD dwKeyPad2 = 0;
+DWORD dwKeySystem = 0;
+
 /*-------------------------------------------------------------------*/
 /*  Function prototypes                                              */
 /*-------------------------------------------------------------------*/
 
+void InfoNES_Stop() {
+    if (bThread) {
+        bThread = false;
+        dwKeySystem |= PAD_SYS_QUIT;
+    }
+}
+
 /* Menu screen */
 int InfoNES_Menu() {
     Logcat::e("HWEMULATOR", "InfoNES_Menu");
-    //TODO
+    if (!bThread) {
+        return -1;
+    }
     return 0;
 }
 
@@ -145,19 +160,21 @@ void InfoNES_LoadFrame() {
 /* Get a joypad state */
 void InfoNES_PadState(DWORD *pdwPad1, DWORD *pdwPad2, DWORD *pdwSystem) {
     Logcat::e("HWEMULATOR", "InfoNES_PadState");
-    //TODO
+    *pdwPad1 = dwKeyPad1;
+    *pdwPad2 = dwKeyPad2;
+    *pdwSystem = dwKeySystem;
 }
 
 /* memcpy */
 void *InfoNES_MemoryCopy(void *dest, const void *src, int count) {
-    Logcat::e("HWEMULATOR", "InfoNES_MemoryCopy: count=%d", count);
+//    Logcat::e("HWEMULATOR", "InfoNES_MemoryCopy: count=%d", count);
     memcpy(dest, src, count);
     return dest;
 }
 
 /* memset */
 void *InfoNES_MemorySet(void *dest, int c, int count) {
-    Logcat::e("HWEMULATOR", "InfoNES_MemorySet: count=%d", count);
+//    Logcat::e("HWEMULATOR", "InfoNES_MemorySet: count=%d", count);
     memset(dest, c, count);
     return dest;
 }
@@ -169,7 +186,7 @@ void InfoNES_DebugPrint(char *pszMsg) {
 
 /* Wait */
 void InfoNES_Wait() {
-    Logcat::e("HWEMULATOR", "InfoNES_Wait");
+//    Logcat::e("HWEMULATOR", "InfoNES_Wait");
     //TODO
 }
 
