@@ -73,79 +73,130 @@ BYTE NesPaletteRGB[64][3] = {
 /* Menu screen */
 int InfoNES_Menu() {
     Logcat::e("HWEMULATOR", "InfoNES_Menu");
+    //TODO
     return 0;
 }
 
 /* Read ROM image file */
 int InfoNES_ReadRom(const char *pszFileName) {
     Logcat::e("HWEMULATOR", "InfoNES_ReadRom: %s", pszFileName);
+    FILE *fp;
+    /* Open ROM file */
+    fp = fopen(pszFileName, "rb");
+    if (fp == NULL) return -1;
 
+    /* Read ROM Header */
+    fread(&NesHeader, sizeof NesHeader, 1, fp);
+    if (memcmp(NesHeader.byID, "NES\x1a", 4) != 0) {
+        /* not .nes file */
+        fclose(fp);
+        return -1;
+    }
+
+    /* Clear SRAM */
+    memset(SRAM, 0, SRAM_SIZE);
+
+    /* If trainer presents Read Triner at 0x7000-0x71ff */
+    if (NesHeader.byInfo1 & 4) {
+        fread(&SRAM[0x1000], 512, 1, fp);
+    }
+
+    /* Allocate Memory for ROM Image */
+    ROM = (BYTE *) malloc(NesHeader.byRomSize * 0x4000);
+
+    /* Read ROM Image */
+    fread(ROM, 0x4000, NesHeader.byRomSize, fp);
+
+    if (NesHeader.byVRomSize > 0) {
+        /* Allocate Memory for VROM Image */
+        VROM = (BYTE *) malloc(NesHeader.byVRomSize * 0x2000);
+
+        /* Read VROM Image */
+        fread(VROM, 0x2000, NesHeader.byVRomSize, fp);
+    }
+
+    /* File close */
+    fclose(fp);
+
+    /* Successful */
     return 0;
 }
 
 /* Release a memory for ROM */
 void InfoNES_ReleaseRom() {
     Logcat::e("HWEMULATOR", "InfoNES_ReleaseRom");
+    if (ROM) {
+        free(ROM);
+        ROM = nullptr;
+    }
 
+    if (VROM) {
+        free(VROM);
+        VROM = nullptr;
+    }
 }
 
 /* Transfer the contents of work frame on the screen */
 void InfoNES_LoadFrame() {
     Logcat::e("HWEMULATOR", "InfoNES_LoadFrame");
-
+    //TODO
 }
 
 /* Get a joypad state */
 void InfoNES_PadState(DWORD *pdwPad1, DWORD *pdwPad2, DWORD *pdwSystem) {
     Logcat::e("HWEMULATOR", "InfoNES_PadState");
-
+    //TODO
 }
 
 /* memcpy */
 void *InfoNES_MemoryCopy(void *dest, const void *src, int count) {
     Logcat::e("HWEMULATOR", "InfoNES_MemoryCopy: count=%d", count);
-    return 0;
+    memcpy(dest, src, count);
+    return dest;
 }
 
 /* memset */
 void *InfoNES_MemorySet(void *dest, int c, int count) {
     Logcat::e("HWEMULATOR", "InfoNES_MemorySet: count=%d", count);
-    return 0;
+    memset(dest, c, count);
+    return dest;
 }
 
 /* Print debug message */
 void InfoNES_DebugPrint(char *pszMsg) {
     Logcat::e("HWEMULATOR", "DEBUG: %s", pszMsg);
-
 }
 
 /* Wait */
 void InfoNES_Wait() {
     Logcat::e("HWEMULATOR", "InfoNES_Wait");
-
+    //TODO
 }
 
 /* Sound Initialize */
 void InfoNES_SoundInit(void) {
     Logcat::e("HWEMULATOR", "InfoNES_SoundInit");
-
+    //TODO
 }
 
 /* Sound Open */
 int InfoNES_SoundOpen(int samples_per_sync, int sample_rate) {
     Logcat::e("HWEMULATOR", "InfoNES_SoundOpen: %d, %d", samples_per_sync, sample_rate);
+    //TODO
     return 0;
 }
 
 /* Sound Close */
 void InfoNES_SoundClose(void) {
     Logcat::e("HWEMULATOR", "InfoNES_SoundClose");
+    //TODO
 }
 
 /* Sound Output 5 Waves - 2 Pulse, 1 Triangle, 1 Noise, 1 DPCM */
 void
 InfoNES_SoundOutput(int samples, BYTE *wave1, BYTE *wave2, BYTE *wave3, BYTE *wave4, BYTE *wave5) {
     Logcat::e("HWEMULATOR", "InfoNES_SoundOutput");
+    //TODO
 }
 
 /* Print system message */
