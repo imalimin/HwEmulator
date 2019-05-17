@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         if (uri == null)
             uri = intent.getParcelableExtra(Intent.EXTRA_STREAM)
         if (uri == null) {
-            val testFile = File(Environment.getExternalStorageDirectory(), "rxgd.nes")
+            val testFile = File(Environment.getExternalStorageDirectory(), "yx.nes")
             if (!testFile.exists()) {
                 Toast.makeText(this, "没有找到该文件", Toast.LENGTH_SHORT).show()
                 finish()
