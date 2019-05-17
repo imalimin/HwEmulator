@@ -24,6 +24,7 @@
 
 #include "AudioPlayer.h"
 #include "Logcat.h"
+#include "../include/HwNESEmulator.h"
 
 
 /*-------------------------------------------------------------------*/
@@ -72,21 +73,27 @@ DWORD dwKeyPad1 = 0;
 DWORD dwKeyPad2 = 0;
 DWORD dwKeySystem = 0;
 AudioPlayer *audioPlayer = nullptr;
+HwNESEmulator *emulator = nullptr;
 
 /*-------------------------------------------------------------------*/
 /*  Function prototypes                                              */
 /*-------------------------------------------------------------------*/
+
+void InfoNES_Attach(HwNESEmulator *e) {
+    emulator = e;
+}
 
 void InfoNES_Stop() {
     if (bThread) {
         bThread = false;
         dwKeySystem |= PAD_SYS_QUIT;
     }
+    emulator = nullptr;
 }
 
 /* Menu screen */
 int InfoNES_Menu() {
-    Logcat::e("HWEMULATOR", "InfoNES_Menu");
+//    Logcat::e("HWEMULATOR", "InfoNES_Menu");
     if (!bThread) {
         return -1;
     }
@@ -141,6 +148,7 @@ int InfoNES_ReadRom(const char *pszFileName) {
 /* Release a memory for ROM */
 void InfoNES_ReleaseRom() {
     Logcat::e("HWEMULATOR", "InfoNES_ReleaseRom");
+    bThread = true;
     if (ROM) {
         free(ROM);
         ROM = nullptr;
@@ -150,30 +158,40 @@ void InfoNES_ReleaseRom() {
         free(VROM);
         VROM = nullptr;
     }
-    bThread = true;
+//    if (frameBuf) {
+//        delete[]frameBuf;
+//        frameBuf = nullptr;
+//    }
 }
 
 /* Transfer the contents of work frame on the screen */
 void InfoNES_LoadFrame() {
-    Logcat::e("HWEMULATOR", "InfoNES_LoadFrame");
+    Logcat::e("HWEMULATOR", "InfoNES_LoadFrame %d, %d, %d, %d",
+              WorkFrame[NES_DISP_HEIGHT * NES_DISP_WIDTH / 2],
+              WorkFrame[NES_DISP_HEIGHT * NES_DISP_WIDTH / 2 + 1],
+              WorkFrame[NES_DISP_HEIGHT * NES_DISP_WIDTH / 2 + 2],
+              WorkFrame[NES_DISP_HEIGHT * NES_DISP_WIDTH / 2 + 3]);
     uint8_t *frameBuf = new uint8_t[NES_DISP_WIDTH * NES_DISP_HEIGHT * 4];
     uint8_t *buf = frameBuf;
     /* Exchange 16-bit to 24-bit  */
-    for (register int y = 0; y < NES_DISP_HEIGHT; y++) {
-        for (register int x = 0; x < NES_DISP_WIDTH; x++) {
+    for (int y = 0; y < NES_DISP_HEIGHT; y++) {
+        for (int x = 0; x < NES_DISP_WIDTH; x++) {
             WORD wColor = WorkFrame[(y << 8) + x];
-            *(buf++) = 0;
             *(buf++) = (uint8_t) ((wColor & 0x7c00) >> 7);
             *(buf++) = (uint8_t) ((wColor & 0x03e0) >> 2);
             *(buf++) = (uint8_t) ((wColor & 0x001f) << 3);
+            *(buf++) = 0;
         }
+    }
+    if (emulator) {
+        emulator->draw(frameBuf, NES_DISP_WIDTH * NES_DISP_HEIGHT * 4);
     }
     delete[]frameBuf;
 }
 
 /* Get a joypad state */
 void InfoNES_PadState(DWORD *pdwPad1, DWORD *pdwPad2, DWORD *pdwSystem) {
-    Logcat::e("HWEMULATOR", "InfoNES_PadState");
+//    Logcat::e("HWEMULATOR", "InfoNES_PadState");
     *pdwPad1 = dwKeyPad1;
     *pdwPad2 = dwKeyPad2;
     *pdwSystem = dwKeySystem;

@@ -6,6 +6,7 @@
 */
 
 #include <jni.h>
+#include <android/native_window_jni.h>
 #include "HwNESEmulator.h"
 
 #ifdef __cplusplus
@@ -22,9 +23,14 @@ JNIEXPORT jlong JNICALL Java_com_lmy_emulator_HwEmulator_create
 }
 
 JNIEXPORT jint JNICALL Java_com_lmy_emulator_HwEmulator_prepare
-        (JNIEnv *env, jobject thiz, jlong handler) {
+        (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
     if (handler) {
-        return getHandler(handler)->prepare("/sdcard/yx.nes");
+        ANativeWindow *win = ANativeWindow_fromSurface(env, surface);
+        if (win) {
+            int width = ANativeWindow_getWidth(win);
+            int height = ANativeWindow_getHeight(win);
+            return getHandler(handler)->prepare("/sdcard/yx.nes", win, width, height);
+        }
     }
     return -1;
 }

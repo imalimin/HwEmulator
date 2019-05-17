@@ -14,6 +14,7 @@
 /*-------------------------------------------------------------------*/
 
 #include "InfoNES_Types.h"
+#include "../include/HwNESEmulator.h"
 
 /*-------------------------------------------------------------------*/
 /*  Palette data                                                     */
@@ -24,6 +25,8 @@ extern WORD NesPalette[];
 /*  User function prototypes                                         */
 /*-------------------------------------------------------------------*/
 void InfoNES_Stop();
+
+void InfoNES_Attach(HwNESEmulator *emulator);
 
 /*-------------------------------------------------------------------*/
 /*  Function prototypes                                              */

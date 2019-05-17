@@ -36,5 +36,6 @@ find_library(
 target_link_libraries(
         hwemulator_nes
         hwvcom
+        android
         ${log-lib}
 )

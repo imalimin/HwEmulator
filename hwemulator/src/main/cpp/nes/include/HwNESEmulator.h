@@ -10,6 +10,8 @@
 
 #include <string>
 #include <cstring>
+#include <android/native_window.h>
+#include "../../common/include/SimpleLock.h"
 
 using namespace std;
 
@@ -19,7 +21,7 @@ public:
 
     virtual ~HwNESEmulator();
 
-    int prepare(string rom);
+    int prepare(string rom, ANativeWindow *win, int width, int height);
 
     int start();
 
@@ -29,10 +31,16 @@ public:
 
     int save();
 
+    int draw(uint8_t *rgba, size_t size);
+
 private:
 
 private:
     string rom;
+    ANativeWindow *win = nullptr;
+    int width = 0;
+    int height = 0;
+    SimpleLock simpleLock;
 };
 
 
