@@ -1,6 +1,7 @@
 package com.lmy.sample.emulator.ui
 
 import android.os.Bundle
+import android.os.Environment
 import android.support.v7.app.AppCompatActivity
 import android.view.SurfaceHolder
 import android.view.View
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             override fun surfaceCreated(holder: SurfaceHolder) {
-                mEmulator.prepare("/sdcard/yx.nes", holder.surface)
+                mEmulator.prepare("${Environment.getExternalStorageDirectory().path}/rxgd.nes", holder.surface)
                 thread = object : Thread() {
                     override fun run() {
                         mEmulator.start()
