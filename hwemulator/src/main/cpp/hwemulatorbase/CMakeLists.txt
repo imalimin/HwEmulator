@@ -1,12 +1,10 @@
 cmake_minimum_required(VERSION 3.4.1)
-project(hwemulator_nes)
+project(hwemulatorbase)
+
+set(PREBUILD_SHARED "${PROJECT_SOURCE_DIR}/prebuild/shared/${ANDROID_ABI}")
 
 include_directories(
-        #        ${CMAKE_SOURCE_DIR}/src/main/cpp/sdl2/include
-        #        ${CMAKE_SOURCE_DIR}/src/main/cpp/sdl1x/include
         ${CMAKE_SOURCE_DIR}/src/main/cpp/common/include
-        ${CMAKE_SOURCE_DIR}/src/main/cpp/nes/infones
-        ${CMAKE_SOURCE_DIR}/src/main/cpp/hwemulatorbase/include
 )
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
@@ -17,16 +15,27 @@ else ()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
 endif ()
 
+#------------------SHARED START----------------------
+#libhwvcom
+add_library(
+        hwvcom
+        SHARED
+        IMPORTED)
+set_target_properties(
+        hwvcom
+        PROPERTIES IMPORTED_LOCATION
+        "${PREBUILD_SHARED}/libhwvcom.so")
+
+#------------------SHARED END----------------------
+
 file(
         GLOB
         SOURCES
         ${PROJECT_SOURCE_DIR}/*.cpp
-        ${PROJECT_SOURCE_DIR}/infones/*.cpp
-        ${PROJECT_SOURCE_DIR}/infones/android/*.cpp
-#        ${PROJECT_SOURCE_DIR}/infones/mapper/*.cpp
+        ${PROJECT_SOURCE_DIR}/entity/*.cpp
 )
 add_library(
-        hwemulator_nes
+        hwemulatorbase
         SHARED
         ${SOURCES}
 )
@@ -36,8 +45,8 @@ find_library(
         log)
 
 target_link_libraries(
-        hwemulator_nes
         hwemulatorbase
+        hwvcom
         android
         ${log-lib}
 )

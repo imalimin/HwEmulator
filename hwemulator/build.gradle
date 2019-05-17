@@ -23,7 +23,7 @@ android {
         }
         sourceSets.main {
             jni.srcDirs = []
-            jniLibs.srcDir "./src/main/cpp/nes/prebuild/shared"
+            jniLibs.srcDir "./src/main/cpp/hwemulatorbase/prebuild/shared"
         }
     }
 
