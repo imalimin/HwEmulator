@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             override fun surfaceCreated(holder: SurfaceHolder) {
-                mEmulator.prepare(holder.surface)
+                mEmulator.prepare("/sdcard/yx.nes", holder.surface)
                 thread = object : Thread() {
                     override fun run() {
                         mEmulator.start()

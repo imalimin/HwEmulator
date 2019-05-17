@@ -23,14 +23,16 @@ JNIEXPORT jlong JNICALL Java_com_lmy_emulator_HwEmulator_create
 }
 
 JNIEXPORT jint JNICALL Java_com_lmy_emulator_HwEmulator_prepare
-        (JNIEnv *env, jobject thiz, jlong handler, jobject surface) {
+        (JNIEnv *env, jobject thiz, jlong handler, jstring rom, jobject surface) {
     if (handler) {
+        const char *pRom = env->GetStringUTFChars(rom, nullptr);
         ANativeWindow *win = ANativeWindow_fromSurface(env, surface);
         if (win) {
             int width = ANativeWindow_getWidth(win);
             int height = ANativeWindow_getHeight(win);
-            return getHandler(handler)->prepare("/sdcard/yx.nes", win, width, height);
+            return getHandler(handler)->prepare(string(pRom), win, width, height);
         }
+        env->ReleaseStringUTFChars(rom, pRom);
     }
     return -1;
 }
