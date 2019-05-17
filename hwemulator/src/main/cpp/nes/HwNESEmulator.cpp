@@ -77,3 +77,7 @@ int HwNESEmulator::draw(uint8_t *rgba, size_t size) {
     Logcat::e("HWEMULATOR", "Native window draw error!");
     return 0;
 }
+
+void HwNESEmulator::postEvent(char event) {
+    InfoNES_Event(event);
+}

@@ -27,10 +27,17 @@ class HwEmulator {
         }
     }
 
+    fun postEvent(event: Char) {
+        if (handler > 0) {
+            postEvent(handler, event)
+        }
+    }
+
     private external fun create(): Long
     private external fun prepare(handler: Long, surface: Surface): Int
     private external fun start(handler: Long): Int
     private external fun stop(handler: Long): Int
+    private external fun postEvent(handler: Long, event: Char)
 
     companion object {
         init {

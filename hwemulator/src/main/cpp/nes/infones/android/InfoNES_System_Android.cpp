@@ -79,6 +79,20 @@ HwNESEmulator *emulator = nullptr;
 /*  Function prototypes                                              */
 /*-------------------------------------------------------------------*/
 
+void InfoNES_Event(char event) {
+    switch (event) {
+        case 'S':
+            /* Start */
+            dwKeyPad1 &= ~( 1 << 3 );
+            break;
+        case 'Q':
+            dwKeySystem |= PAD_SYS_QUIT;
+            break;
+        default:
+            break;
+    }
+}
+
 void InfoNES_Attach(HwNESEmulator *e) {
     emulator = e;
 }
@@ -86,7 +100,7 @@ void InfoNES_Attach(HwNESEmulator *e) {
 void InfoNES_Stop() {
     if (bThread) {
         bThread = false;
-        dwKeySystem |= PAD_SYS_QUIT;
+        InfoNES_Event('Q');
     }
     emulator = nullptr;
 }
@@ -166,11 +180,11 @@ void InfoNES_ReleaseRom() {
 
 /* Transfer the contents of work frame on the screen */
 void InfoNES_LoadFrame() {
-    Logcat::e("HWEMULATOR", "InfoNES_LoadFrame %d, %d, %d, %d",
-              WorkFrame[NES_DISP_HEIGHT * NES_DISP_WIDTH / 2],
-              WorkFrame[NES_DISP_HEIGHT * NES_DISP_WIDTH / 2 + 1],
-              WorkFrame[NES_DISP_HEIGHT * NES_DISP_WIDTH / 2 + 2],
-              WorkFrame[NES_DISP_HEIGHT * NES_DISP_WIDTH / 2 + 3]);
+//    Logcat::e("HWEMULATOR", "InfoNES_LoadFrame %d, %d, %d, %d",
+//              WorkFrame[NES_DISP_HEIGHT * NES_DISP_WIDTH / 2],
+//              WorkFrame[NES_DISP_HEIGHT * NES_DISP_WIDTH / 2 + 1],
+//              WorkFrame[NES_DISP_HEIGHT * NES_DISP_WIDTH / 2 + 2],
+//              WorkFrame[NES_DISP_HEIGHT * NES_DISP_WIDTH / 2 + 3]);
     uint8_t *frameBuf = new uint8_t[NES_DISP_WIDTH * NES_DISP_HEIGHT * 4];
     uint8_t *buf = frameBuf;
     /* Exchange 16-bit to 24-bit  */

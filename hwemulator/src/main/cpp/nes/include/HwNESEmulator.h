@@ -33,6 +33,8 @@ public:
 
     int draw(uint8_t *rgba, size_t size);
 
+    void postEvent(char event);
+
 private:
 
 private:

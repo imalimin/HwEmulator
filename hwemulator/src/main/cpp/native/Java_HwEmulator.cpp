@@ -51,6 +51,13 @@ JNIEXPORT jint JNICALL Java_com_lmy_emulator_HwEmulator_stop
     return -1;
 }
 
+JNIEXPORT void JNICALL Java_com_lmy_emulator_HwEmulator_postEvent
+        (JNIEnv *env, jobject thiz, jlong handler, jchar event) {
+    if (handler) {
+        getHandler(handler)->postEvent(event);
+    }
+}
+
 #ifdef __cplusplus
 }
 #endif
