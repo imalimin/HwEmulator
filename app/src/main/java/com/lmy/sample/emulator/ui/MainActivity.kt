@@ -8,6 +8,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
+import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.View
 import android.widget.Toast
@@ -16,10 +17,34 @@ import com.lmy.sample.emulator.R
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
-class MainActivity : AppCompatActivity(), View.OnClickListener {
-
+class MainActivity : AppCompatActivity() {
     private val mEmulator = HwEmulator()
     private var thread: Thread? = null
+    private val onTouchListener = object : View.OnTouchListener {
+        override fun onTouch(v: View, event: MotionEvent): Boolean {
+            if (MotionEvent.ACTION_DOWN != event.action &&
+                    MotionEvent.ACTION_UP != event.action) {
+                return false
+            }
+            val action = when (event.action) {
+                MotionEvent.ACTION_DOWN -> 0x101
+                MotionEvent.ACTION_UP -> 0x102
+                else -> 0x000
+            }
+            when (v.id) {
+                R.id.selectBtn -> mEmulator.postEvent(0x005, action)
+                R.id.startBtn -> mEmulator.postEvent(0x006, action)
+                R.id.aBtn -> mEmulator.postEvent(0x007, action)
+                R.id.bBtn -> mEmulator.postEvent(0x008, action)
+                R.id.upBtn -> mEmulator.postEvent(0x003, action)
+                R.id.downBtn -> mEmulator.postEvent(0x004, action)
+                R.id.leftBtn -> mEmulator.postEvent(0x002, action)
+                R.id.rightBtn -> mEmulator.postEvent(0x001, action)
+            }
+            return true
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -41,12 +66,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             finish()
             return
         }
-        selectBtn.setOnClickListener(this)
-        startBtn.setOnClickListener(this)
-        aBtn.setOnClickListener(this)
-        bBtn.setOnClickListener(this)
-        upBtn.setOnClickListener(this)
-        downBtn.setOnClickListener(this)
+        selectBtn.setOnTouchListener(onTouchListener)
+        startBtn.setOnTouchListener(onTouchListener)
+        aBtn.setOnTouchListener(onTouchListener)
+        bBtn.setOnTouchListener(onTouchListener)
+        upBtn.setOnTouchListener(onTouchListener)
+        downBtn.setOnTouchListener(onTouchListener)
+        leftBtn.setOnTouchListener(onTouchListener)
+        rightBtn.setOnTouchListener(onTouchListener)
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
@@ -66,17 +93,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 }.apply { start() }
             }
         })
-    }
-
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.selectBtn -> mEmulator.postEvent('e')
-            R.id.startBtn -> mEmulator.postEvent('r')
-            R.id.aBtn -> mEmulator.postEvent('z')
-            R.id.bBtn -> mEmulator.postEvent('x')
-            R.id.upBtn -> mEmulator.postEvent('w')
-            R.id.downBtn -> mEmulator.postEvent('s')
-        }
     }
 
     override fun onDestroy() {

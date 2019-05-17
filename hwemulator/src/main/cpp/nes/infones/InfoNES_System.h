@@ -26,7 +26,7 @@ extern WORD NesPalette[];
 /*-------------------------------------------------------------------*/
 void InfoNES_Stop();
 
-void InfoNES_Event(char event, bool pressed);
+void InfoNES_Event(DWORD keyPad1, DWORD keyPad2, DWORD keySystem);
 
 void InfoNES_Attach(HwNESEmulator *emulator);
 

@@ -78,6 +78,54 @@ int HwNESEmulator::draw(uint8_t *rgba, size_t size) {
     return 0;
 }
 
-void HwNESEmulator::postEvent(char event) {
-    InfoNES_Event(event, true);
+void HwNESEmulator::postEvent(HwGamePadEvent *event) {
+    switch (event->getKey()) {
+        case HwGamePadEvent::KEY_RIGHT:
+            /* Right */
+            handleEvent(7, event->getAction());
+            break;
+        case HwGamePadEvent::KEY_LEFT:
+            /* Left */
+            handleEvent(6, event->getAction());
+            break;
+        case HwGamePadEvent::KEY_DOWN:
+            /* Down */
+            handleEvent(5, event->getAction());
+            break;
+        case HwGamePadEvent::KEY_UP:
+            /* Up */
+            handleEvent(4, event->getAction());
+            break;
+        case HwGamePadEvent::KEY_START:
+            /* Start */
+            handleEvent(3, event->getAction());
+            break;
+        case HwGamePadEvent::KEY_SELECT:
+            /* Select */
+            handleEvent(2, event->getAction());
+            break;
+        case HwGamePadEvent::KEY_A:
+            /* 'A' */
+            handleEvent(1, event->getAction());
+            break;
+        case HwGamePadEvent::KEY_B:
+            /* 'B' */
+            handleEvent(0, event->getAction());
+            break;
+        case HwGamePadEvent::KEY_ESC:
+            /* Exit */
+            dwKeySystem |= PAD_SYS_QUIT;
+            break;
+        default:
+            break;
+    }
+    InfoNES_Event(dwKeyPad1, dwKeyPad2, dwKeySystem);
+}
+
+void HwNESEmulator::handleEvent(int event, int action) {
+    if (HwGamePadEvent::ACTION_DOWN == action) {
+        dwKeyPad1 |= (1 << event);
+    } else {
+        dwKeyPad1 &= ~(1 << event);
+    }
 }

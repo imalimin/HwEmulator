@@ -11,6 +11,7 @@
 #include <string>
 #include <cstring>
 #include <android/native_window.h>
+#include "HwGamePadEvent.h"
 #include "../../common/include/SimpleLock.h"
 
 using namespace std;
@@ -33,9 +34,10 @@ public:
 
     int draw(uint8_t *rgba, size_t size);
 
-    void postEvent(char event);
+    void postEvent(HwGamePadEvent *event);
 
 private:
+    void handleEvent(int event, int action);
 
 private:
     string rom;
@@ -43,6 +45,10 @@ private:
     int width = 0;
     int height = 0;
     SimpleLock simpleLock;
+
+    unsigned long dwKeyPad1 = 0;
+    unsigned long dwKeyPad2 = 0;
+    unsigned long dwKeySystem = 0;
 };
 
 

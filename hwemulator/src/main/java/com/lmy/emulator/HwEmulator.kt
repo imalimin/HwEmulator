@@ -27,9 +27,9 @@ class HwEmulator {
         }
     }
 
-    fun postEvent(event: Char) {
+    fun postEvent(event: Int, action: Int) {
         if (handler > 0) {
-            postEvent(handler, event)
+            postEvent(handler, event, action)
         }
     }
 
@@ -37,7 +37,7 @@ class HwEmulator {
     private external fun prepare(handler: Long, rom: String, surface: Surface): Int
     private external fun start(handler: Long): Int
     private external fun stop(handler: Long): Int
-    private external fun postEvent(handler: Long, event: Char)
+    private external fun postEvent(handler: Long, event: Int, action: Int)
 
     companion object {
         init {

@@ -64,62 +64,10 @@ static void handleEvent(int event, bool pressed) {
     }
 }
 
-void InfoNES_Event(char event, bool pressed) {
-    switch (event) {
-        case 'd':
-        case 'D':
-            /* Right */
-            handleEvent(7, pressed);
-            break;
-
-        case 'a':
-        case 'A':
-            /* Left */
-            handleEvent(6, pressed);
-            break;
-
-        case 's':
-        case 'S':
-            /* Down */
-            handleEvent(5, pressed);
-            break;
-
-        case 'w':
-        case 'W':
-            /* Up */
-            handleEvent(4, pressed);
-            break;
-
-        case 'r':
-        case 'R':
-            /* Start */
-            handleEvent(3, pressed);
-            break;
-
-        case 'e':
-        case 'E':
-            /* Select */
-            handleEvent(2, pressed);
-            break;
-
-        case 'z':
-        case 'Z':
-            /* 'A' */
-            handleEvent(1, pressed);
-            break;
-
-        case 'x':
-        case 'X':
-            /* 'B' */
-            handleEvent(0, pressed);
-            break;
-        case 'q':
-        case 'Q':
-            dwKeySystem |= PAD_SYS_QUIT;
-            break;
-        default:
-            break;
-    }
+void InfoNES_Event(DWORD keyPad1, DWORD keyPad2, DWORD keySystem) {
+    dwKeyPad1 = keyPad1;
+    dwKeyPad2 = keyPad2;
+    dwKeySystem = keySystem;
 }
 
 void InfoNES_Attach(HwNESEmulator *e) {
@@ -129,7 +77,7 @@ void InfoNES_Attach(HwNESEmulator *e) {
 void InfoNES_Stop() {
     if (bThread) {
         bThread = false;
-        InfoNES_Event('Q', true);
+        dwKeySystem |= PAD_SYS_QUIT;
     }
     emulator = nullptr;
 }

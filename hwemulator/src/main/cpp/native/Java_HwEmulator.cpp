@@ -8,6 +8,7 @@
 #include <jni.h>
 #include <android/native_window_jni.h>
 #include "HwNESEmulator.h"
+#include "HwGamePadEvent.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,9 +55,11 @@ JNIEXPORT jint JNICALL Java_com_lmy_emulator_HwEmulator_stop
 }
 
 JNIEXPORT void JNICALL Java_com_lmy_emulator_HwEmulator_postEvent
-        (JNIEnv *env, jobject thiz, jlong handler, jchar event) {
+        (JNIEnv *env, jobject thiz, jlong handler, jint event, jint action) {
     if (handler) {
-        getHandler(handler)->postEvent(event);
+        HwGamePadEvent *e = HwGamePadEvent::create(event, action);
+        getHandler(handler)->postEvent(e);
+        delete e;
     }
 }
 
