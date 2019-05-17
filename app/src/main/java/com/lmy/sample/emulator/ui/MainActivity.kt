@@ -41,7 +41,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             finish()
             return
         }
+        selectBtn.setOnClickListener(this)
         startBtn.setOnClickListener(this)
+        aBtn.setOnClickListener(this)
+        bBtn.setOnClickListener(this)
+        upBtn.setOnClickListener(this)
+        downBtn.setOnClickListener(this)
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
@@ -65,7 +70,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.startBtn -> mEmulator.postEvent('S')
+            R.id.selectBtn -> mEmulator.postEvent('e')
+            R.id.startBtn -> mEmulator.postEvent('r')
+            R.id.aBtn -> mEmulator.postEvent('z')
+            R.id.bBtn -> mEmulator.postEvent('x')
+            R.id.upBtn -> mEmulator.postEvent('w')
+            R.id.downBtn -> mEmulator.postEvent('s')
         }
     }
 

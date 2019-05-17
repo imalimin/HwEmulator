@@ -79,5 +79,5 @@ int HwNESEmulator::draw(uint8_t *rgba, size_t size) {
 }
 
 void HwNESEmulator::postEvent(char event) {
-    InfoNES_Event(event);
+    InfoNES_Event(event, true);
 }

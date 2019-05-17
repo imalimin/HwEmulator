@@ -26,7 +26,7 @@ extern WORD NesPalette[];
 /*-------------------------------------------------------------------*/
 void InfoNES_Stop();
 
-void InfoNES_Event(char event);
+void InfoNES_Event(char event, bool pressed);
 
 void InfoNES_Attach(HwNESEmulator *emulator);
 
