@@ -94,4 +94,9 @@
                 android:text="B" />
         </LinearLayout>
     </LinearLayout>
+
+    <com.lmy.emulator.widget.FCGamePadView
+        android:id="@+id/gamePadView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>

@@ -9,6 +9,7 @@ file(
         GLOB
         SOURCES
         ${PROJECT_SOURCE_DIR}/*.cpp
+        ${PROJECT_SOURCE_DIR}/entity/*.cpp
 )
 add_library( # Sets the name of the library.
         hwemulator_native

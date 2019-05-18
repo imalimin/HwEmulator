@@ -20,6 +20,8 @@ public:
 private:
     HwGamePadEvent(int key, int action);
 
+    void toString();
+
 public:
     static const int KEY_NONE = 0x000;
     static const int KEY_RIGHT = 0x001;
