@@ -1,18 +1,16 @@
 package com.lmy.emulator.widget
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import com.lmy.emulator.entity.HwGamePadEvent
+import com.lmy.emulator.entity.HwRegion
 
 
 open class GamePadView : View {
-    private val buttonMap = HashMap<Int, Rect>()
+    private val buttonMap = HashMap<Int, HwRegion>()
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var listener: ((HwGamePadEvent) -> Unit)? = null
     private var lastKey = HwGamePadEvent.KEY_NONE
@@ -42,8 +40,12 @@ open class GamePadView : View {
         paint.strokeWidth = 6f
     }
 
+    fun addButton(key: Int, region: HwRegion) {
+        buttonMap[key] = region
+    }
+
     fun addButton(key: Int, rect: Rect) {
-        buttonMap[key] = Rect(rect.left, rect.top, rect.right, rect.bottom)
+        buttonMap[key] = HwRegion.createRect(rect)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -57,7 +59,7 @@ open class GamePadView : View {
                 val x = event.getX(id).toInt()
                 val y = event.getY(id).toInt()
                 buttonMap.map {
-                    if (it.value.contains(x, y)) {
+                    if (it.value.contains(PointF(x.toFloat(), y.toFloat()))) {
                         if (MotionEvent.ACTION_DOWN == event.actionMasked ||
                                 MotionEvent.ACTION_MOVE == event.actionMasked ||
                                 MotionEvent.ACTION_UP == event.actionMasked) {
@@ -109,10 +111,11 @@ open class GamePadView : View {
         return super.onTouchEvent(event)
     }
 
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         buttonMap.map {
-            canvas?.drawRect(it.value, paint)
+            it.value.draw(canvas, paint)
         }
     }
 
