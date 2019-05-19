@@ -29,6 +29,14 @@ class HwRegion : Path {
     }
 
     companion object {
+        fun createRect(left: Float, top: Float, right: Float, bottom: Float): HwRegion {
+            val rect = RectF(left, top, right, bottom)
+            val region = HwRegion()
+            region.addRect(RectF(0f, 0f, rect.width(), rect.height()), Path.Direction.CCW)
+            region.setLocation(rect.left, rect.top)
+            return region
+        }
+
         fun createRect(rect: Rect): HwRegion {
             val region = HwRegion()
             region.addRect(RectF(0f, 0f, rect.width().toFloat(), rect.height().toFloat()), Path.Direction.CCW)

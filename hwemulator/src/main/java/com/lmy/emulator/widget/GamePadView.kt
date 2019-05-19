@@ -73,6 +73,7 @@ open class GamePadView : View {
                             }
                             lastKey = it.key
                         }
+                        return true
                     }
                 }
             }

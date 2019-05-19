@@ -8,9 +8,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
-import android.view.MotionEvent
 import android.view.SurfaceHolder
-import android.view.View
 import android.widget.Toast
 import com.lmy.emulator.HwEmulator
 import com.lmy.sample.emulator.R
@@ -20,28 +18,6 @@ import java.io.File
 class MainActivity : AppCompatActivity() {
     private val mEmulator = HwEmulator()
     private var thread: Thread? = null
-    private val onTouchListener = View.OnTouchListener { v, event ->
-        if (MotionEvent.ACTION_DOWN != event.action &&
-                MotionEvent.ACTION_UP != event.action) {
-            return@OnTouchListener false
-        }
-        val action = when (event.action) {
-            MotionEvent.ACTION_DOWN -> 0x101
-            MotionEvent.ACTION_UP -> 0x102
-            else -> 0x000
-        }
-        when (v.id) {
-            R.id.selectBtn -> mEmulator.postEvent(0x005, action)
-            R.id.startBtn -> mEmulator.postEvent(0x006, action)
-            R.id.aBtn -> mEmulator.postEvent(0x007, action)
-            R.id.bBtn -> mEmulator.postEvent(0x008, action)
-            R.id.upBtn -> mEmulator.postEvent(0x003, action)
-            R.id.downBtn -> mEmulator.postEvent(0x004, action)
-            R.id.leftBtn -> mEmulator.postEvent(0x002, action)
-            R.id.rightBtn -> mEmulator.postEvent(0x001, action)
-        }
-        true
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,19 +35,11 @@ class MainActivity : AppCompatActivity() {
             uri = Uri.fromFile(testFile)
         }
         val path = getRealFilePath(uri)
-        if (TextUtils.isEmpty(path)) {
+        if (TextUtils.isEmpty(path) || !File(path).exists()) {
             Toast.makeText(this, "没有找到该文件", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
-        selectBtn.setOnTouchListener(onTouchListener)
-        startBtn.setOnTouchListener(onTouchListener)
-        aBtn.setOnTouchListener(onTouchListener)
-        bBtn.setOnTouchListener(onTouchListener)
-//        upBtn.setOnTouchListener(onTouchListener)
-//        downBtn.setOnTouchListener(onTouchListener)
-//        leftBtn.setOnTouchListener(onTouchListener)
-//        rightBtn.setOnTouchListener(onTouchListener)
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
