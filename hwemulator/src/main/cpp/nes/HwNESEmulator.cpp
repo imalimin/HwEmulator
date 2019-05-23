@@ -22,11 +22,28 @@ HwNESEmulator::~HwNESEmulator() {
 int HwNESEmulator::prepare(string rom, ANativeWindow *win, int width, int height) {
     this->rom = rom;
     this->win = win;
-    this->width = width;
-    this->height = height;
-    ANativeWindow_setBuffersGeometry(this->win, NES_DISP_WIDTH,
-                                     NES_DISP_HEIGHT,
-                                     WINDOW_FORMAT_RGBA_8888);
+    this->width = NES_DISP_WIDTH;
+    this->height = NES_DISP_HEIGHT;
+    float winScale = width / (float) height;
+    float frameScale = NES_DISP_WIDTH / (float) NES_DISP_HEIGHT;
+    if (winScale > frameScale) {
+        this->focusHeight = 1;
+        this->height = NES_DISP_HEIGHT;
+        this->width = static_cast<int>(NES_DISP_HEIGHT * winScale);
+    } else if (winScale < frameScale) {
+        this->focusHeight = -1;
+        this->width = NES_DISP_WIDTH;
+        this->height = static_cast<int>(NES_DISP_WIDTH / winScale);
+    }
+    if (0 != this->width % 2) {
+        this->width += 1;
+    }
+    if (0 != this->height % 2) {
+        this->height += 1;
+    }
+    Logcat::i("HWEMULATOR", "Window size %dx%d -> %dx%d", width, height, this->width, this->height);
+    frameBuf = new uint8_t[this->width * this->height * 4];
+    ANativeWindow_setBuffersGeometry(this->win, this->width, this->height, WINDOW_FORMAT_RGBA_8888);
     return 0;
 }
 
@@ -46,6 +63,10 @@ int HwNESEmulator::stop() {
     simpleLock.lock();
     ANativeWindow_release(this->win);
     this->win = nullptr;
+    if (frameBuf) {
+        delete[]frameBuf;
+        frameBuf = nullptr;
+    }
     simpleLock.unlock();
     return 0;
 }
@@ -58,15 +79,31 @@ int HwNESEmulator::save() {
     return 0;
 }
 
+void HwNESEmulator::drawFrame(uint8_t *rgba, size_t size) {
+    if (1 == focusHeight) {
+        int offset = static_cast<int>((this->width - NES_DISP_WIDTH) / 2.0);
+        for (int i = 0; i < NES_DISP_HEIGHT; ++i) {
+            memcpy(&frameBuf[(i * this->width + offset) * 4], &rgba[i * NES_DISP_WIDTH * 4],
+                   static_cast<size_t>(NES_DISP_WIDTH * 4));
+        }
+    } else if (-1 == focusHeight) {
+        int offset = static_cast<int>((this->height - NES_DISP_HEIGHT) / 2.0);
+        memcpy(&frameBuf[offset * this->width * 4], rgba, size);
+    } else {
+        memcpy(frameBuf, rgba, size);
+    }
+}
+
 int HwNESEmulator::draw(uint8_t *rgba, size_t size) {
     simpleLock.lock();
     if (this->win && rgba) {
+        drawFrame(rgba, size);
         ANativeWindow_Buffer nwBuffer;
-        if (0 == ANativeWindow_lock(this->win, &nwBuffer, NULL)) {
+        if (0 == ANativeWindow_lock(this->win, &nwBuffer, nullptr)) {
 //            memset(rgba, 128, size);
 //            Logcat::i("HWEMULATOR", "draw %d, %d, %d, %d", rgba[size / 2], rgba[size / 2 + 1],
 //                      rgba[size / 2 + 2], rgba[size / 2 + 3]);
-            memcpy(nwBuffer.bits, rgba, size);
+            memcpy(nwBuffer.bits, frameBuf, static_cast<size_t>(this->width * this->height * 4));
             if (0 == ANativeWindow_unlockAndPost(this->win)) {
                 simpleLock.unlock();
                 return 0;
@@ -96,10 +133,17 @@ void HwNESEmulator::postEvent(HwGamePadEvent *event) {
             /* Up */
             handleEvent(4, event->getAction());
             break;
-        case HwGamePadEvent::KEY_START:
+        case HwGamePadEvent::KEY_START: {
             /* Start */
             handleEvent(3, event->getAction());
+//            simpleLock.lock();
+//            FILE *file = fopen("/sdcard/nes_capture.rgba", "wb");
+//            fwrite(frameBuf, 1, this->width * this->height * 4, file);
+//            fclose(file);
+//            Logcat::i("HWEMULATOR", "Capture %dx%d", this->width, this->height);
+//            simpleLock.unlock();
             break;
+        }
         case HwGamePadEvent::KEY_SELECT:
             /* Select */
             handleEvent(2, event->getAction());

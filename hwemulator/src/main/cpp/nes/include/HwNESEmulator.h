@@ -39,11 +39,15 @@ public:
 private:
     void handleEvent(int event, int action);
 
+    void drawFrame(uint8_t *rgba, size_t size);
+
 private:
     string rom;
     ANativeWindow *win = nullptr;
     int width = 0;
     int height = 0;
+    int focusHeight = 0;//1:focus height, -1:focus width, 0:height same as width
+    uint8_t *frameBuf = nullptr;
     SimpleLock simpleLock;
 
     unsigned long dwKeyPad1 = 0;

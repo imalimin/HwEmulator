@@ -49,7 +49,9 @@ JNIEXPORT jint JNICALL Java_com_lmy_emulator_HwEmulator_start
 JNIEXPORT jint JNICALL Java_com_lmy_emulator_HwEmulator_stop
         (JNIEnv *env, jobject thiz, jlong handler) {
     if (handler) {
-        return getHandler(handler)->stop();
+        HwNESEmulator *emulator = getHandler(handler);
+        emulator->stop();
+        delete emulator;
     }
     return -1;
 }

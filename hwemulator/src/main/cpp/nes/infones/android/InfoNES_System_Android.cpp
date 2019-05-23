@@ -171,7 +171,7 @@ void InfoNES_LoadFrame() {
             *(buf++) = (uint8_t) ((wColor & 0x7c00) >> 7);
             *(buf++) = (uint8_t) ((wColor & 0x03e0) >> 2);
             *(buf++) = (uint8_t) ((wColor & 0x001f) << 3);
-            *(buf++) = 0;
+            *(buf++) = 128;
         }
     }
     if (emulator) {
