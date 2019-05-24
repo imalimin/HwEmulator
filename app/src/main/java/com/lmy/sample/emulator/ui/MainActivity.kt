@@ -8,6 +8,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
+import android.util.Log
 import android.view.SurfaceHolder
 import android.widget.Toast
 import com.lmy.emulator.HwEmulator
@@ -42,7 +43,9 @@ class MainActivity : AppCompatActivity() {
         }
         surfaceView.keepScreenOn = true
         surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+                Log.i("HWEMULATOR", "surfaceChanged " + width + "x" + height)
+                mEmulator.attachWindow(holder.surface)
             }
 
             override fun surfaceDestroyed(holder: SurfaceHolder?) {
@@ -51,12 +54,15 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun surfaceCreated(holder: SurfaceHolder) {
-                mEmulator.prepare(path!!, holder.surface)
-                thread = object : Thread() {
-                    override fun run() {
-                        mEmulator.start()
-                    }
-                }.apply { start() }
+                surfaceView.post {
+                    Log.i("HWEMULATOR", "surfaceCreated " + surfaceView.width + "x" + surfaceView.height)
+                    mEmulator.prepare(path!!)
+                    thread = object : Thread() {
+                        override fun run() {
+                            mEmulator.start()
+                        }
+                    }.apply { start() }
+                }
             }
         })
         gamePadView.setOnPadEventListener {

@@ -19,8 +19,21 @@ HwNESEmulator::~HwNESEmulator() {
 
 }
 
-int HwNESEmulator::prepare(string rom, ANativeWindow *win, int width, int height) {
+int HwNESEmulator::prepare(string rom) {
     this->rom = rom;
+    return 0;
+}
+
+int HwNESEmulator::attachWindow(ANativeWindow *win, int width, int height) {
+    simpleLock.lock();
+    if (this->win) {
+        ANativeWindow_release(this->win);
+        this->win = nullptr;
+        if (frameBuf) {
+            delete[]frameBuf;
+            frameBuf = nullptr;
+        }
+    }
     this->win = win;
     this->width = NES_DISP_WIDTH;
     this->height = NES_DISP_HEIGHT;
@@ -41,9 +54,12 @@ int HwNESEmulator::prepare(string rom, ANativeWindow *win, int width, int height
     if (0 != this->height % 2) {
         this->height += 1;
     }
-    Logcat::i("HWEMULATOR", "Window size %dx%d -> %dx%d", width, height, this->width, this->height);
+    Logcat::i("HWEMULATOR", "Window size %dx%d(%dx%d) -> %dx%d", ANativeWindow_getWidth(win),
+              ANativeWindow_getHeight(win), width, height, this->width, this->height);
     frameBuf = new uint8_t[this->width * this->height * 4];
+    memset(frameBuf, 0, this->width * this->height * 4);
     ANativeWindow_setBuffersGeometry(this->win, this->width, this->height, WINDOW_FORMAT_RGBA_8888);
+    simpleLock.unlock();
     return 0;
 }
 
@@ -140,7 +156,7 @@ void HwNESEmulator::postEvent(HwGamePadEvent *event) {
 //            FILE *file = fopen("/sdcard/nes_capture.rgba", "wb");
 //            fwrite(frameBuf, 1, this->width * this->height * 4, file);
 //            fclose(file);
-//            Logcat::i("HWEMULATOR", "Capture %dx%d", this->width, this->height);
+            Logcat::i("HWEMULATOR", "Capture %dx%d", this->width, this->height);
 //            simpleLock.unlock();
             break;
         }

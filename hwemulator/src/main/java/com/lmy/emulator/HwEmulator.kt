@@ -9,9 +9,15 @@ class HwEmulator {
         handler = create()
     }
 
-    fun prepare(rom: String, surface: Surface) {
+    fun prepare(rom: String) {
         if (handler > 0) {
-            prepare(handler, rom, surface)
+            prepare(handler, rom)
+        }
+    }
+
+    fun attachWindow(surface: Surface) {
+        if (handler > 0) {
+            attachWindow(handler, surface)
         }
     }
 
@@ -34,7 +40,8 @@ class HwEmulator {
     }
 
     private external fun create(): Long
-    private external fun prepare(handler: Long, rom: String, surface: Surface): Int
+    private external fun prepare(handler: Long, rom: String): Int
+    private external fun attachWindow(handler: Long, surface: Surface)
     private external fun start(handler: Long): Int
     private external fun stop(handler: Long): Int
     private external fun postEvent(handler: Long, event: Int, action: Int)

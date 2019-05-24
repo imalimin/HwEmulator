@@ -22,7 +22,9 @@ public:
 
     virtual ~HwNESEmulator();
 
-    int prepare(string rom, ANativeWindow *win, int width, int height);
+    int prepare(string rom);
+
+    int attachWindow(ANativeWindow *win, int width, int height);
 
     int start();
 
