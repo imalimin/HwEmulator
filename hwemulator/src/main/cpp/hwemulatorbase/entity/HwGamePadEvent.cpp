@@ -12,7 +12,7 @@ HwGamePadEvent *HwGamePadEvent::create(int key, int action) {
 HwGamePadEvent::HwGamePadEvent(int key, int action) : Object() {
     this->key = key;
     this->action = action;
-    toString();
+//    toString();
 }
 
 HwGamePadEvent::~HwGamePadEvent() {
