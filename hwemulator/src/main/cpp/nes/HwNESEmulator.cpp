@@ -69,6 +69,14 @@ int HwNESEmulator::start() {
         Logcat::e("HWEMULATOR", "Load rom failed!");
         return -1;
     }
+    char *file = new char[rom.length() + 1];
+    strcpy(file, rom.c_str());
+    strcpy(strrchr(file, '.') + 1, "srm");
+    string *fileStr = new string(file);
+    int ret = load(fileStr);
+    Logcat::i("HWEMULATOR", "Load %d", ret);
+    delete[] file;
+    delete fileStr;
     /* MainLoop */
     InfoNES_Main();
     return 0;
@@ -76,6 +84,15 @@ int HwNESEmulator::start() {
 
 int HwNESEmulator::stop() {
     InfoNES_Stop();
+    char *file = new char[rom.length() + 1];
+    strcpy(file, rom.c_str());
+    strcpy(strrchr(file, '.') + 1, "srm");
+    string *fileStr = new string(file);
+    int ret = save(fileStr);
+    Logcat::i("HWEMULATOR", "Save %d", ret);
+    delete[] file;
+    delete fileStr;
+
     simpleLock.lock();
     ANativeWindow_release(this->win);
     this->win = nullptr;
@@ -188,4 +205,172 @@ void HwNESEmulator::handleEvent(int event, int action) {
     } else {
         dwKeyPad1 &= ~(1 << event);
     }
+}
+
+int HwNESEmulator::save(string *file) {
+/*
+ *  Save a SRAM
+ *
+ *  Return values
+ *     0 : Normally
+ *    -1 : SRAM data couldn't be written
+ */
+
+    FILE *fp;
+    int nUsedTable[256];
+    unsigned char chData;
+    unsigned char chPrevData;
+    unsigned char chTag;
+    int nIdx;
+    int nEncoded;
+    int nEncLen;
+    int nRunLen;
+    unsigned char pDstBuf[SRAM_SIZE];
+
+//    if (!nSRAM_SaveFlag)
+//        return 0;  // It doesn't need to save it
+
+    /*-------------------------------------------------------------------*/
+    /*  Compress a SRAM data                                             */
+    /*-------------------------------------------------------------------*/
+
+    memset(nUsedTable, 0, sizeof nUsedTable);
+
+    for (nIdx = 0; nIdx < SRAM_SIZE; ++nIdx) {
+        ++nUsedTable[SRAM[nIdx++]];
+    }
+    for (nIdx = 1, chTag = 0; nIdx < 256; ++nIdx) {
+        if (nUsedTable[nIdx] < nUsedTable[chTag])
+            chTag = nIdx;
+    }
+
+    nEncoded = 0;
+    nEncLen = 0;
+    nRunLen = 1;
+
+    pDstBuf[nEncLen++] = chTag;
+
+    chPrevData = SRAM[nEncoded++];
+
+    while (nEncoded < SRAM_SIZE && nEncLen < SRAM_SIZE - 133) {
+        chData = SRAM[nEncoded++];
+
+        if (chPrevData == chData && nRunLen < 256)
+            ++nRunLen;
+        else {
+            if (nRunLen >= 4 || chPrevData == chTag) {
+                pDstBuf[nEncLen++] = chTag;
+                pDstBuf[nEncLen++] = chPrevData;
+                pDstBuf[nEncLen++] = nRunLen - 1;
+            } else {
+                for (nIdx = 0; nIdx < nRunLen; ++nIdx)
+                    pDstBuf[nEncLen++] = chPrevData;
+            }
+
+            chPrevData = chData;
+            nRunLen = 1;
+        }
+
+    }
+    if (nRunLen >= 4 || chPrevData == chTag) {
+        pDstBuf[nEncLen++] = chTag;
+        pDstBuf[nEncLen++] = chPrevData;
+        pDstBuf[nEncLen++] = nRunLen - 1;
+    } else {
+        for (nIdx = 0; nIdx < nRunLen; ++nIdx)
+            pDstBuf[nEncLen++] = chPrevData;
+    }
+
+    /*-------------------------------------------------------------------*/
+    /*  Write a SRAM data                                                */
+    /*-------------------------------------------------------------------*/
+
+    // Open SRAM file
+    fp = fopen(file->c_str(), "wb");
+    if (fp == NULL)
+        return -1;
+
+    // Write SRAM data
+    fwrite(pDstBuf, nEncLen, 1, fp);
+
+    // Close SRAM file
+    fclose(fp);
+
+    // Successful
+    return 0;
+}
+
+int HwNESEmulator::load(string *file) {
+
+/*
+ *  Load a SRAM
+ *
+ *  Return values
+ *     0 : Normally
+ *    -1 : SRAM data couldn't be read
+ */
+
+    FILE *fp;
+    unsigned char pSrcBuf[SRAM_SIZE];
+    unsigned char chData;
+    unsigned char chTag;
+    int nRunLen;
+    int nDecoded;
+    int nDecLen;
+    int nIdx;
+
+    // It doesn't need to save it
+//    nSRAM_SaveFlag = 0;
+
+    // It is finished if the ROM doesn't have SRAM
+    if (!ROM_SRAM)
+        return -1;
+
+    // There is necessity to save it
+//    nSRAM_SaveFlag = 1;
+
+    // The preparation of the SRAM file name
+//    strcpy(szSaveName, szRomName);
+//    strcpy(strrchr(szSaveName, '.') + 1, "srm");
+
+    /*-------------------------------------------------------------------*/
+    /*  Read a SRAM data                                                 */
+    /*-------------------------------------------------------------------*/
+
+    // Open SRAM file
+    fp = fopen(file->c_str(), "rb");
+    if (fp == NULL)
+        return -2;
+
+    // Read SRAM data
+    fread(pSrcBuf, SRAM_SIZE, 1, fp);
+
+    // Close SRAM file
+    fclose(fp);
+
+    /*-------------------------------------------------------------------*/
+    /*  Extract a SRAM data                                              */
+    /*-------------------------------------------------------------------*/
+
+    nDecoded = 0;
+    nDecLen = 0;
+
+    chTag = pSrcBuf[nDecoded++];
+
+    while (nDecLen < 8192) {
+        chData = pSrcBuf[nDecoded++];
+
+        if (chData == chTag) {
+            chData = pSrcBuf[nDecoded++];
+            nRunLen = pSrcBuf[nDecoded++];
+            for (nIdx = 0; nIdx < nRunLen + 1; ++nIdx) {
+                SRAM[nDecLen++] = chData;
+            }
+        } else {
+            SRAM[nDecLen++] = chData;
+        }
+    }
+
+    // Successful
+    return 0;
 }

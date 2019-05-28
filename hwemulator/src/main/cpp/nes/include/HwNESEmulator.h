@@ -38,6 +38,10 @@ public:
 
     void postEvent(HwGamePadEvent *event);
 
+    int save(string *file);
+
+    int load(string *file);
+
 private:
     void handleEvent(int event, int action);
 
